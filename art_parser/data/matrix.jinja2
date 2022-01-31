@@ -1,0 +1,27 @@
+
+# {{ title }} Atomic Tests by ATT&CK Tactic & Technique
+
+<table id="data">
+<thead>
+<tr>
+{%- for tactic in tactics %}
+    <th>{{ tactic }}</th>
+{%- endfor %}
+</tr>
+</thead>
+<tbody>
+{%- for tactic in tactics %}
+    {%- if items[tactic] %}
+        <tr>
+            {%- for technique in items[tactic] %}
+                {%- if technique.url %}
+                <td><a href="{{technique.url}}">{{technique.name}}</a></td>
+                {%- else %}
+                <td>{{technique.name}}</td>
+                {%- endif %}
+            {%- endfor %}
+        </tr>
+    {%- endif %}
+{%- endfor %}
+</tbody>
+</table>

@@ -1,0 +1,28 @@
+site_name: art_parser
+site_description: A Python package created using carcass.
+docs_dir: docs
+theme:
+  name: 'material'
+nav:
+    - Home: 'index.md'
+    - Documentation:
+        - '': 'README.md'
+    - Code Reference:
+        'art_parser': 'art_parser-ref.md'
+    - About:
+        - 'License': 'LICENSE.md'
+        - 'Contributing': 'CONTRIBUTING.md'
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          selection:
+            filters:
+              - "!^_"  # exlude all members starting with _
+              - "^__init__$"  # but always include __init__ modules and methods
+  - mike:
+      version_selector: true
+extra:
+  version:
+    provider: mike

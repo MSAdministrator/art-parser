@@ -1,0 +1,58 @@
+# {{attack_technique}} - {{ display_name }}
+
+## [Description from ATT&CK](https://attack.mitre.org/techniques/{{create_path(attack_technique)}})
+<blockquote><{{mitre_description}}</blockquote>
+
+## Atomic Tests
+{% set count = namespace(value=1) %}
+{% for test in atomic_tests -%}
+* [Atomic Test #{{count.value}} - {{ test.name }}](#atomic-test-{{count.value}}---{{format_strings_with_spaces(test.name)}})
+{% set count.value = count.value + 1 %}
+{%- endfor %}
+
+{% set test_count = namespace(value=1) %}
+{% for test in atomic_tests -%}
+## Atomic Test #{{test_count.value}} - {{ test.name }}
+{{ replace_command_string(test.description, test.input_arguments) }}
+
+**Supported Platforms:** {% for platform in test.supported_platforms -%}{{ replace_string(platform) }}{%- endfor %}
+**Auto Generated GUID:** {{ test.auto_generated_guid }}
+{% if test.input_arguments %}
+#### Inputs:
+| Name | Description | Type | Default Value |
+|------|-------------|------|---------------|
+{% for input in test.input_arguments -%}
+| {{input.name}} | {{input.description}} | {{input.type}} | {{input.default}} |
+{% endfor %}
+{% endif %}
+
+{% if test.executor.name == 'manual' %}
+#### Run it with these steps! {% if test.executor.elevation_required %} Elevation Required (e.g. root or admin) {% endif %}
+{{test.executor.steps}}
+{% else %}
+### **Attack Commands:** Run with `{{ test.executor.name }}`! {% if test.executor.elevation_required %} Elevation Required (e.g. root or admin) {% endif %}
+```{{replace_string(test.executor.name)}}
+{{replace_command_string(test.executor.command, test.input_arguments)}}
+```
+
+### **Cleanup Commands:** Run with `{{ test.executor.name }}`! {% if test.executor.elevation_required %} Elevation Required (e.g. root or admin) {% endif %}
+```{{replace_string(test.executor.name)}}
+{{replace_command_string(test.executor.cleanup_command, test.input_arguments)}}
+```
+{% endif %}
+{% if test.dependencies %}
+### **Dependencies:** Run with {% if test.dependency_executor_name %} `{{test.dependency_executor_name}}`{% else %} `{{ test.executor.name }}`{% endif %}!
+{% for dependency in test.dependencies %}
+#### **Description: ** {{ replace_command_string(dependency.description, test.input_arguments) }}
+#### **Check Prereq Commands:**
+```{% if test.dependency_executor_name %}{{replace_string(test.dependency_executor_name)}}{% else %}{{replace_string(test.executor.name)}}{% endif %}
+{{replace_command_string(dependency.prereq_command, test.input_arguments)}}
+```
+#### **Get Prereq Commands:**
+```{% if test.dependency_executor_name %}{{replace_string(test.dependency_executor_name)}}{% else %}{{replace_string(test.executor.name)}}{% endif %}
+{{replace_command_string(dependency.get_prereq_command, test.input_arguments)}}
+```
+{% endfor %}
+{% endif %}
+{% set test_count.value = test_count.value + 1 %}
+{%- endfor %}
